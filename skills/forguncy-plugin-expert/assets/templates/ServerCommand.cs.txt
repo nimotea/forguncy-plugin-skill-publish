@@ -1,0 +1,89 @@
+using System;
+using System.ComponentModel;
+using System.Threading.Tasks;
+using GrapeCity.Forguncy.Commands;
+using GrapeCity.Forguncy.Plugin;
+
+namespace MyPluginNamespace
+{
+    [Icon("pack://application:,,,/MyPluginNamespace;component/Resources/Icon.png")]
+    public class MyServerCommand : Command, ICommandExecutableInServerSideAsync
+    {
+        [DisplayName("示例属性")]
+        [FormulaProperty]
+        [Description("属性的详细说明。如果该属性接收 JSON 数据，建议在此处提供示例结构，例如：\r\n[{\"depth\": 100, \"val\": 1}]")]
+        public object SampleProperty { get; set; }
+
+        [DisplayName("启用调试模式")]
+        [DefaultValue(false)] // 规范：如果默认值为 true，必须标注 [DefaultValue(true)]，否则 False 状态无法保存
+        public bool EnableDebug { get; set; } = false;
+
+        public async Task<ExecuteResult> ExecuteAsync(IServerCommandExecuteContext context)
+        {
+            try
+            {
+                // 日志记录规范：
+                // v11+ 推荐使用 context.Log 接口（如果可用）
+                // 或使用传统的 dataContext.Log.WriteLog(new LogEntry(...))
+                // context.Parameters["Log"]?.ToString(); // 某些场景下的平替方案
+
+                // 1. Evaluate Formula
+                var value = await context.EvaluateFormulaAsync(SampleProperty);
+
+                // 2. Perform Logic
+                // TODO: Implement your business logic here.
+                // Example: string result = DoSomething(value);
+
+                /* 
+                // [Best Practice] Defensive Programming for External Services
+                // When calling external APIs (e.g., HttpClient), catch specific exceptions to provide actionable feedback.
+                /*
+                try 
+                {
+                    // await httpClient.PostAsync(...)
+                }
+                catch (System.Net.Http.HttpRequestException netEx)
+                {
+                    // Transform raw network errors into user-friendly messages
+                    throw new Exception($"Failed to connect to external service. Please check if the service is running and the URL is correct. Details: {netEx.Message}", netEx);
+                }
+                */
+
+                // 3. Return Result
+                return new ExecuteResult();
+            }
+            catch (Exception ex)
+            {
+                return new ExecuteResult
+                {
+                    Message = ex.Message
+                };
+            }
+        }
+
+        public override string ToString()
+        {
+            // 在活字格命令列表中显示的名称。建议格式：命令名: 关键参数描述
+            return "我的服务端命令"; 
+        }
+
+        public override CommandScope GetCommandScope()
+        {
+            return CommandScope.ExecutableInServer;
+        }
+
+        /* 
+        // 示例：动态属性可见性 (Dynamic Property Visibility)
+        // 根据其他属性的值控制某个属性在设计器中是否显示。
+        public override bool GetDesignerPropertyVisible(string propertyName, CommandScope commandScope)
+        {
+            if (propertyName == nameof(SampleProperty))
+            {
+                // return SomeOtherProperty == true; // 仅当 SomeOtherProperty 为 true 时显示
+                return true;
+            }
+            return base.GetDesignerPropertyVisible(propertyName, commandScope);
+        }
+        */
+    }
+}

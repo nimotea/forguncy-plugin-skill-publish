@@ -1,0 +1,209 @@
+/// <reference path="../Declarations/forguncy.d.ts" />
+/// <reference path="../Declarations/forguncy.Plugin.d.ts" />
+
+// 最佳实践：定义与 C# Enum 对应的 JS 常量对象，避免魔法数字
+// const MyEnumType = {
+//     OptionA: 0,
+//     OptionB: 1
+// };
+
+class MyPluginCellType extends Forguncy.Plugin.CellTypeBase {
+    constructor() {
+        super();
+        // 最佳实践：在构造函数中初始化实例变量，用于存储状态或数据缓存
+        this._data = null; 
+        this._lastDataJson = null; // 用于交互幂等性检查的数据快照
+        this._container = null;
+    }
+
+    /**
+     * [RunTimeMethod] 单元格操作示例
+     * 最佳实践：交互幂等性 (Idempotency)
+     * 在执行昂贵操作前进行值对比。
+     */
+    resetAndReload(newData) {
+        const currentDataJson = JSON.stringify(newData);
+        if (this._lastDataJson === currentDataJson) {
+            console.log("[MyPlugin]: Data unchanged, skipping reload.");
+            return;
+        }
+
+        console.log("[MyPlugin]: Data changed, reloading...");
+        // 执行实际重载逻辑
+        // this.doReload(newData);
+
+        this._lastDataJson = currentDataJson;
+    }
+
+    /**
+     * 创建单元格内容
+     * 重要：严禁使用 async 关键字，必须同步返回 DOM 元素，否则会导致单元格显示为空白
+     */
+    createContent() {
+        const cellType = this.CellElement.CellType;
+        // 最佳实践：创建容器并缓存引用
+        const container = $("<div></div>");
+        this._container = container;
+
+        try {
+            console.log("[MyPlugin]: createContent started.", cellType);
+
+            // TODO: 在此处编写您的核心渲染逻辑
+            container.text(cellType.MyOption || "Hello Forguncy");
+            
+            // 示例：使用 Enum 对象进行分支判断
+            // if (cellType.Type === MyEnumType.OptionA) { ... }
+
+            // 示例：使用 applySettings 批量同步配置
+            // const options = {
+            //     title: "Default Title",
+            //     color: "#000000"
+            // };
+            // this.applySettings(options, cellType, {
+            //     "title": "HeaderTitle",  // JS属性: C#属性
+            //     "color": "ForeColor"
+            // });
+
+            console.log("[MyPlugin]: createContent complete.");
+        } catch (e) {
+            console.error("[MyPlugin]: Error in createContent:", e);
+            
+            // [Optional] 设计器预览错误反馈
+            // 仅在用户明确需要设计器预览功能时，才启用以下逻辑：
+            /*
+            if (this.isDesignerPreview) {
+                container.css({
+                    "color": "red",
+                    "border": "1px solid red",
+                    "padding": "4px",
+                    "overflow": "auto",
+                    "font-size": "12px",
+                    "background": "#fff0f0"
+                }).text("Render Error: " + e.message);
+            }
+            */
+        }
+        
+        return container;
+    }
+
+    /**
+     * 最佳实践：定义一个自定义方法，供 Command 通过 JS 直接调用
+     * 这样可以避免直接操作 DOM，而是通过更新状态来响应命令
+     * 调用示例：page.getCell(r, c).getCellType().updateData({ status: "done" });
+     */
+    updateData(newData) {
+        console.log("[MyPlugin]: updateData called.", newData);
+        this._data = newData;
+        if (this._container) {
+            this._container.text("Updated: " + JSON.stringify(newData));
+        }
+    }
+
+    /**
+     * 最佳实践：数据处理管道 (Data Pipeline)
+     * 将原始数据转换为第三方库所需的格式。提取为独立方法以确保初始化和更新时逻辑一致。
+     * @param {any} rawValue - 来自活字格的原始单元格值或参数
+     * @returns {any} - 转换后的视图模型数据
+     */
+    processData(rawValue) {
+        if (!rawValue) return null;
+        // 示例：执行 mapping 逻辑
+        // return rawValue.map(item => ({ label: item.Name, value: item.ID }));
+        return rawValue;
+    }
+
+    /**
+     * 最佳实践：预设配置 (Preset) 模式
+     * 处理业务预设逻辑，将高级选项展开为原子配置。
+     * @returns {any} - 最终生效的配置对象
+     */
+    getEffectiveConfig() {
+        const settings = this.CellElement.CellType;
+        // 逻辑示例：如果用户选择了某个业务预设，则返回对应的配置组合
+        // if (settings.Preset === "BusinessModeA") { return { ... }; }
+        return settings;
+    }
+
+    /**
+     * [RunTimeMethod] 单元格操作示例
+     * 最佳实践：采用“上下文感知”模式，尽量减少对外暴露的参数。
+     * 如果逻辑可以根据设计器配置（this.CellElement.CellType）推导，则无需通过参数传递。
+     */
+    refreshContent() {
+        const settings = this.CellElement.CellType;
+        console.log("[MyPlugin]: refreshContent called. Settings:", settings);
+        // 智能推断：根据配置执行不同逻辑，而不是暴露 updateType 参数
+        if (settings.UseAnimation) {
+            this._container.fadeOut().fadeIn();
+        }
+    }
+
+    onRender(container, renderInfo) {
+        const settings = this.CellElement.CellType;
+        console.log("[MyPlugin]: onRender called. Settings:", settings);
+
+        // 最佳实践：默认值管理 (SSOT)
+        // 严禁在 JS 中硬编码复杂配置的默认值。应在 C# 构造函数中初始化属性，此处直接读取。
+        // const config = JSON.parse(settings.MyComplexConfig); 
+
+        this._container = $(container);
+    }
+
+    onPageLoaded() {
+        // 页面加载完成后调用
+        // 建议在此处初始化依赖 DOM 的第三方库或绑定全局事件
+        
+        // 最佳实践：公式属性监听 (Formula Property)
+        // 如果插件包含标记了 [FormulaProperty] 的属性，必须监听其计算结果变化
+        // this.onFormulaResultChanged(this.CellElement.CellType.MyFormulaProp, result => {
+        //     // 更新 UI
+        //     this._container.text(result);
+        // });
+    }
+
+    /**
+     * 辅助函数：等待容器获得真实尺寸后再执行回调
+     * 活字格的 DOM 挂载是异步的，直接在 createContent 中获取尺寸可能为 0
+     */
+    waitForSize(container, callback) {
+        const checkSize = () => {
+            const width = container.width();
+            const height = container.height();
+            if (width > 0 && height > 0) {
+                callback(width, height);
+            } else {
+                requestAnimationFrame(checkSize);
+            }
+        };
+        checkSize();
+    }
+
+    /**
+     * 辅助函数：批量应用配置到目标对象
+     * 用于解决 C# 属性与 JS 库配置项命名不一致的问题，减少手动 if/else 赋值
+     * @param {Object} target - 目标配置对象 (如第三方库的 options)
+     * @param {Object} source - 源配置对象 (通常是 this.CellElement.CellType)
+     * @param {Object} mapping - 属性映射表 { "JS配置项名": "CSharp属性名" }
+     */
+    applySettings(target, source, mapping) {
+        for (const [jsKey, csKey] of Object.entries(mapping)) {
+            const value = source[csKey];
+            // 只有当 C# 属性值不为 null/undefined 时才覆盖
+            if (value !== undefined && value !== null) {
+                target[jsKey] = value;
+            }
+        }
+    }
+
+    destroy() {
+        // 单元格销毁时调用
+        // 重要：凡是涉及到 window/document 的事件绑定或定时器，必须在此处手动解绑/清除
+        // 示例：window.removeEventListener('resize', this._resizeHandler);
+        super.destroy();
+    }
+}
+
+// 注册单元格插件
+// 参数格式: "命名空间.类名, 程序集名称"
+Forguncy.Plugin.CellTypeHelper.registerCellType("MyPluginNamespace.MyCellType, MyPluginNamespace", MyPluginCellType);

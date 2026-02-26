@@ -1,0 +1,30 @@
+{
+    "outputs": [
+        {
+            "filename": "WorkOrders.json",
+            "count": 10,
+            "schema": {
+                "Id": "uuid",
+                "OrderNo": "string:WO-{index}",
+                "ProductName": "enum:Product A,Product B,Product C",
+                "Quantity": "int:10,500",
+                "DueDate": "date:future_30d",
+                "Status": "enum:Pending,In Progress,Completed",
+                "Priority": "enum:High,Medium,Low",
+                "IsUrgent": "bool"
+            }
+        },
+        {
+            "filename": "Resources.json",
+            "count": 5,
+            "schema": {
+                "Id": "uuid",
+                "ResourceCode": "string:RES-{index}",
+                "Name": "string:Machine #{index}",
+                "Type": "enum:CNC,Lathe,Assembly Line",
+                "CapacityPerHour": "int:10,100",
+                "MaintenanceDate": "date:future_90d"
+            }
+        }
+    ]
+}

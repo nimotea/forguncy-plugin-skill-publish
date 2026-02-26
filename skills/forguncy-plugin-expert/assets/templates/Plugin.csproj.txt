@@ -1,0 +1,45 @@
+<!-- 
+  注意：
+  通常情况下，建议使用官方的“活字格插件构建器”来生成项目结构和 .csproj 文件。
+  本文件仅作为手动配置或参考使用。
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>MyPluginNamespace</AssemblyName>
+    <RootNamespace>MyPluginNamespace</RootNamespace>
+    
+    <!-- 插件元数据配置 / Plugin Metadata -->
+    <Version>1.0.0</Version>
+    <Authors>活字格插件大师</Authors>
+    <Company>活字格开发实验室</Company>
+    <Product>My Plugin Product</Product>
+    <Description>在此处填写插件的详细描述，将显示在活字格插件管理界面中。</Description>
+    <Copyright>Copyright © 2024</Copyright>
+    
+    <!-- 插件图标配置 / Plugin Icon Configuration -->
+    <!-- <PackageIcon>icon.png</PackageIcon> -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Replace with actual version or path -->
+    <PackageReference Include="GrapeCity.Forguncy.ServerApi" Version="X.X.X" />
+    <PackageReference Include="GrapeCity.Forguncy.CellTypes" Version="X.X.X" />
+    <!-- 常用依赖 / Common Dependencies -->
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <!-- 图标文件引用示例 / Icon File Reference Example -->
+  <!--
+  <ItemGroup>
+    <None Include="icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+  -->
+
+</Project>

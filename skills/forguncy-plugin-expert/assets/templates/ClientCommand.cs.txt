@@ -1,0 +1,42 @@
+using System;
+using System.ComponentModel;
+using GrapeCity.Forguncy.Plugin;
+
+namespace MyPluginNamespace
+{
+    [Icon("pack://application:,,,/MyPluginNamespace;component/Resources/Icon.png")]
+    public class MyClientCommand : Command
+    {
+        [DisplayName("提示消息")]
+        public string Message { get; set; }
+
+        public override string ToString()
+        {
+            // 在活字格命令列表中显示的名称。建议格式：命令名: 关键参数描述
+            return "我的客户端命令";
+        }
+
+        public override string GetExecuteJavaScript()
+        {
+            // 返回在客户端执行的 JavaScript 代码
+            // 可以使用 Forguncy.Page 等客户端 API
+            // 建议：增加对 TargetCell 为空的防御性校验
+            return $@"
+                var page = Forguncy.Page;
+                var cell = page.getCell('{Message}'); // 假设 Message 是单元格名称
+
+                if (cell) {{
+                    var cellType = cell.getCellType();
+                    // 检查是否为预期的 CellType 实例，并调用其自定义方法
+                    if (cellType && typeof cellType.updateData === 'function') {{
+                        cellType.updateData({{ status: 'command_triggered', time: new Date() }});
+                    }} else {{
+                        console.warn('Target cell is not the expected type or updateData method is missing.');
+                    }}
+                }} else {{
+                    console.error('Target cell not found: {Message}');
+                }}
+            ";
+        }
+    }
+}

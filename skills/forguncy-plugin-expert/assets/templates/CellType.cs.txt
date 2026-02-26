@@ -1,0 +1,20 @@
+using System;
+using System.ComponentModel;
+using GrapeCity.Forguncy.Plugin;
+using GrapeCity.Forguncy.CellTypes;
+
+namespace MyPluginNamespace
+{
+    [Icon("pack://application:,,,/MyPluginNamespace;component/Resources/Icon.png")]
+    public class MyCellType : CellType
+    {
+        [DisplayName("我的选项")]
+        [Description("这里是属性的详细说明。如果该属性接收 JSON 数据，建议在此处提供示例结构，例如：\r\n[{\"id\": 1, \"name\": \"test\"}]")]
+        public string MyOption { get; set; }
+
+        public override string ToString()
+        {
+            return "我的自定义单元格";
+        }
+    }
+}

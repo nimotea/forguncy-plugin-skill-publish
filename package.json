@@ -1,0 +1,9 @@
+{
+  "name": "forguncy-plugin-expert-distribution",
+  "version": "1.0.0",
+  "description": "Forguncy Plugin Master Skill Distribution",
+  "private": true,
+  "files": [
+    "**/*"
+  ]
+}
