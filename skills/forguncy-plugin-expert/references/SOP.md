@@ -8,7 +8,7 @@
    - **必须**运行 `scripts/init_project.ps1` 启动构建器。
    - **严禁**手动创建项目结构或使用 `dotnet new`。
    - **严禁**使用 `Start-Process` 直接调用 `ForguncyPluginCreator.exe`。
-3. **项目配置**：用户确认创建完成后，运行 `scripts/setup_project.ps1` 配置 Logo 和依赖。
+3. **项目配置**：用户确认创建完成后，运行 `scripts/init_project.ps1` （原 setup_project 功能已合并）配置 Logo 和依赖。
 4. **产出**：获取包含 `.csproj` 和基础代码的项目结构。
 
 ## 阶段二：需求分析与计划 (Planning)
