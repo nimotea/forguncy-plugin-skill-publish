@@ -49,7 +49,7 @@ if (-not [string]::IsNullOrEmpty($BuilderPath)) {
     }
 }
 
-if ($null -eq $BuilderPath) {
+if ([string]::IsNullOrEmpty($BuilderPath)) {
     Write-Warning "Forguncy Plugin Builder not found in default paths."
     Write-Host "Checked paths:"
     if ($PossiblePaths) { $PossiblePaths | ForEach-Object { Write-Host " - $_" } }
