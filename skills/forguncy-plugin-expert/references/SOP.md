@@ -29,10 +29,13 @@
 3. **极简 API**：严禁暴露内部参数，优先内部推导。
 
 ## 阶段四：核心实现 (Implementation)
-1. **服务端 (C#)**：
+1. **依赖预检 (Dependency Pre-check)**：
+   - 在编写代码前，若计划使用非 BCL (Base Class Library) 类库（如 `Newtonsoft.Json`），**必须**先检查 `.csproj` 文件。
+   - 若未引用，必须在生成代码前调用 `dotnet add package <PackageName>`。
+2. **服务端 (C#)**：
    - 数据库：强制使用 `this.Context.DataAccess` + 参数化查询。
    - 日志：使用 `this.Context.Logger`，禁止 `Console.WriteLine`。
-2. **前端 (JS)**：
+3. **前端 (JS)**：
    - **同步约束**：生命周期方法严禁 `async`。
    - **逻辑复用**：提取数据转换纯函数，确保 `onRender` 与 `updateData` 一致。
    - **物理拆分与模块化**：对于大型项目，禁止将所有逻辑挤在单个 JS 文件中。应按功能（工具类、工厂类、主类）进行物理拆分，并通过 `PluginConfig.json` 的 `javascript` 数组严格控制加载顺序（底层工具先加载，业务逻辑后加载）。

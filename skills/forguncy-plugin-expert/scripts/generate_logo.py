@@ -196,6 +196,9 @@ def main():
     parser.add_argument("--bg-end", help="Gradient end color (hex)")
     
     args = parser.parse_args()
+
+    # Debug: Print received arguments to help troubleshoot shell parsing issues
+    print(f"DEBUG: Arguments received: {args}")
     
     # Base configuration for Plugin Logo (100x100)
     plugin_logo_config = {

@@ -21,6 +21,12 @@
 - `EvaluateFormulaAsync(object propertyValue)`: 计算属性值，该属性可能包含公式或直接值。
 - `Log`: 访问服务器端记录器 (logger)。
 
+## 日志 (Logging)
+- **Namespace**: `using GrapeCity.Forguncy.Log;`
+- **Pattern**: **静态类调用 (Static Class)**
+- **❌ 错误**: `context.Logger.Info(...)`
+- **✅ 正确**: `Logger.Info(...)`, `Logger.Error(...)`
+
 ## 客户端命令 (Client Command)
 - `GetExecuteJavaScript()`: 必须重写的方法，返回在浏览器端执行的 JS 代码。
 - `Forguncy.Page`: (JS) 访问当前页面对象，获取单元格值等。

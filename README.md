@@ -38,7 +38,12 @@ npx skills add nimotea/forguncy-plugin-skill-publish --agent cursor
 npx skills add nimotea/forguncy-plugin-skill-publish --agent vscode
 ```
 
-**OpenCode / Trae:**
+**Trae:**
+```bash
+npx skills add nimotea/forguncy-plugin-skill-publish --agent trae
+```
+
+**OpenCode:**
 ```bash
 npx skills add nimotea/forguncy-plugin-skill-publish --agent opencode
 ```

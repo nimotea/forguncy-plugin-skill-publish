@@ -98,8 +98,9 @@ description: 协助开发者初始化、编写和规范化活字格插件代码�
     - **用途**：为插件快速生成符合规范的 SVG 图标（用于代码）和 PNG 图标（用于元数据）。
     - **风险警示 (Critical)**：活字格设计器要求插件主图标（`PluginConfig.json` 中的 `image` 属性）必须为 **.png** 格式。生成的 `.svg` 文件仅适用于代码中的 `[Icon]` 特性。
     - **同步建议**：调用 `generate_logo.py` 时建议加上 `--sync` 参数，工具会自动识别并覆盖项目中的 `PluginLogo.png` 或 `Icon.png`，防止因文件名不一致（如大小写）导致引用丢失。
+    - **参数引述**：在 PowerShell 环境下，所有字符串参数值（特别是包含空格或特殊字符的）**必须**使用双引号包裹。
     - **防御性检查**：生成后请务必确认 `Resources` 目录下的旧图标已被替换，且文件名与代码引用严格一致。
-    - **调用方式**：`python scripts/generate_logo.py <项目路径> --text "文字" --type gantt --sync`
+    - **调用方式**：`python scripts/generate_logo.py --text "文字" --bg-start "#FF0000" --bg-end "#0000FF"`
     - **集成**：脚本默认会同时生成 `icon.svg` 和 `icon.png`。
 
 ## 指令
