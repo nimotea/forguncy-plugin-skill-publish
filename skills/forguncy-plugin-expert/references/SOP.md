@@ -7,7 +7,6 @@
 2. **项目创建 (强制)**：
    - **必须**运行 `scripts/init_project.ps1` 启动构建器。
    - **严禁**手动创建项目结构或使用 `dotnet new`。
-   - **严禁**使用 `Start-Process` 直接调用 `ForguncyPluginCreator.exe`。
 3. **项目配置**：用户确认创建完成后，运行 `scripts/init_project.ps1` （原 setup_project 功能已合并）配置 Logo 和依赖。
 4. **产出**：获取包含 `.csproj` 和基础代码的项目结构。
 
@@ -21,9 +20,42 @@
 3. **确认**：用户确认计划后方可开始编码。
 
 ## 阶段三：定义与属性设计 (Design)
-1. **类型决策**：参考 `Decision_Tree.md`。
+1. **类型决策**：根据以下决策逻辑选择最适合的插件类型：
+
+```mermaid
+graph TD
+    Start[我要实现什么功能?] --> Q1{是在单元格上显示UI吗?}
+
+    Q1 -- 是 --> CellType[单元格类型 CellType]
+
+    Q1 -- 否 --> Q2{是处理 HTTP 请求吗?}
+
+    Q2 -- 是 --> ServerAPI[服务端 API ServerAPI]
+
+    Q2 -- 否 --> Q3{是执行一段逻辑吗?}
+
+    Q3 -- 是 --> Q4{逻辑在何处执行?}
+
+    Q4 -- 服务端 --> ServerCommand[服务端命令 ServerCommand]
+
+    Q4 -- 浏览器/客户端 --> Q5{逻辑是针对特定单元格吗?}
+
+    Q5 -- 是 --> RunTimeMethod[单元格操作 RunTimeMethod]
+    Q5 -- 否 --> ClientCommand[客户端命令 ClientCommand]
+
+    Q3 -- 否 --> Other[查看其他扩展点如 Middleware 等]
+```
+
+**决策说明**：
+- **CellType**：在单元格上显示自定义UI控件、图表、复杂交互组件
+- **ServerAPI**：提供自定义HTTP接口供外部系统调用
+- **ServerCommand**：后端逻辑处理、数据库操作、文件读写
+- **ClientCommand**：纯前端逻辑、页面跳转、浏览器API调用
+- **RunTimeMethod**：针对特定单元格的客户端操作
+- **Middleware**：拦截请求、全局异常处理、自定义认证逻辑
+
 2. **属性定义**：
-   - 遵循 `Unified_Properties.md`。
+   - 遵循 `references/Unified_Properties.md`。
    - 必须使用 `[DisplayName]`。
    - 布尔值默认 True 时必须加 `[DefaultValue(true)]`。
 3. **极简 API**：严禁暴露内部参数，优先内部推导。

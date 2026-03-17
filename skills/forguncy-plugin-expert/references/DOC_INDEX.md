@@ -5,6 +5,7 @@
 ## 1. 核心指南 (Core Guides)
 *   **指导原则**: [Guiding_Principles.md](Guiding_Principles.md)
 *   **API 速查表**: [API_Cheatsheet.md](API_Cheatsheet.md)
+*   **CLI 参考**: [CLI_Reference.md](CLI_Reference.md)
 *   **项目配置**: [Project_Configuration/Plugin_Metadata.md](Project_Configuration/Plugin_Metadata.md)
 
 ## 2. 服务端命令 (ServerCommand)
